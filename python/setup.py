@@ -1,11 +1,9 @@
 import os
 import sys
-from compiler import generate_proto
 import shutil
-from distutils.core import Command
-from distutils.command import build as build_module
-from distutils.extension import Extension
-from setuptools import setup
+from setuptools.command import build_ext
+from compiler import generate_proto
+from setuptools import setup, Command, Extension
 
 # setuptools DWIM monkey-patch madness
 # http://mail.python.org/pipermail/distutils-sig/2007-September/thread.html#8204
@@ -33,12 +31,12 @@ def _build_test_protos():
 	)
 
 
-class Build(build_module.build):
+class Build(build_ext.build_ext):
     def run(self):
         _build_rpcz_proto()
         _build_test_protos()
         shutil.copy('py', 'rpcz')
-        build_module.build.run(self)
+        build_ext.build_ext.run(self)
 
 
 class GenPyext(Command):
@@ -79,8 +77,8 @@ setup(
 			['cython/pywraprpcz.cpp'],
 			libraries=['rpcz'],
 			include_dirs=[
-				'../include',
-			    '../build/src',
+				'./../include',
+			    './../build/src',
 				'/usr/local/include'
 			],
 			library_dirs=[
