@@ -20,8 +20,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_BINARY_DIR}/src)
 
 cmake_minimum_required (VERSION 2.8.0)
-set(CMAKE_CXX_FLAGS
-  "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-sign-compare -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-sign-compare -Wno-unused-parameter")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -Werror")
 set(CMAKE_OSX_ARCHITECTURES x86_64)
 
@@ -37,6 +36,10 @@ if(rpcz_build_examples)
 endif(rpcz_build_examples)
 
 file(GLOB RPCZ_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/include/rpcz/*.h*")
+file(GLOB RPCZ_PUBLIC_PROTO_HEADERS "${PROJECT_BINARY_DIR}/src/rpcz/*.pb.h*")
+file(GLOB RPCZ_PUBLIC_PROTO_PY_SOURCES "${PROJECT_BINARY_DIR}/src/rpcz/*_pb2.py")
 if(rpcz_install_headers)
-	install(FILES ${RPCZ_PUBLIC_HEADERS} DESTINATION include/rpcz)
+	message("Installing header files:\n ${RPCZ_PUBLIC_HEADERS} ${RPCZ_PUBLIC_PROTO_HEADERS} ${RPCZ_PUBLIC_PROTO_PY_SOURCES}")
+	install(FILES ${RPCZ_PUBLIC_HEADERS} ${RPCZ_PUBLIC_PROTO_HEADERS} DESTINATION include/rpcz)
+	install(FILES ${RPCZ_PUBLIC_PROTO_PY_SOURCES} DESTINATION ./)
 endif(rpcz_install_headers)

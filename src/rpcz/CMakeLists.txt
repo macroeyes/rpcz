@@ -3,11 +3,13 @@ project (RPCZ)
 # The version number.
 set (RPCZ_VERSION_MAJOR 0)
 set (RPCZ_VERSION_MINOR 9)
+set (RPCZ_VERSION_PATCH 1)
 
 add_subdirectory(plugin)
 
 protobuf_generate_cpp(RPCZ_PB_SRCS RPCZ_PB_HDRS proto/rpcz.proto)
-set(PROTO_SOURCES ${RPCZ_PB_SRCS} ${RPCZ_PB_HDRS})
+protobuf_generate_python(RPCZ_PB_PY_SRCS proto/rpcz.proto)
+set(PROTO_SOURCES ${RPCZ_PB_SRCS} ${RPCZ_PB_HDRS} ${RPCZ_PB_PY_SRCS})
 
 include_directories(${PROJECT_BINARY_DIR})
 set(RPCZ_SOURCES
