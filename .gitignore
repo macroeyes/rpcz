@@ -136,7 +136,11 @@ docs/_build/
 
 # PyBuilder
 target/
-
+/bin/*
+!/bin/.gitkeep
+/dist/*
+!/dist/.gitkeep
+/include/rpcz/*.pb.h*
 *.pyc
 /src/rpcz/*_pb2.py
 /src/rpcz/*_rpcz.py
