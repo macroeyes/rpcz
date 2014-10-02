@@ -6,26 +6,25 @@ from distutils.command import build as build_module
 from distutils.extension import Extension
 from distutils.core import setup
 
-rpcz_root = os.path.abspath(os.path.dirname(__file__))
+rpcz_python_dir = os.path.abspath(os.path.dirname(__file__))
 
 def _build_rpcz_proto():
     compiler.generate_proto(
-		os.path.join(rpcz_root, 'src/rpcz/proto/rpcz.proto'),
-		'rpcz'
-	)
-
+        '../build/src/rpcz/proto/rpcz.proto',
+        'rpcz'
+    )
 
 def _build_test_protos():
     compiler.generate_proto(
-		os.path.join(rpcz_root, 'test/proto/search.proto'),
+		'../test/proto/search.proto',
 		'tests'
 	)
     compiler.generate_proto(
-		os.path.join(rpcz_root, 'test/proto/search.proto'),
-		os.path.join(rpcz_root, 'tests'),
+		'../test/proto/search.proto',
+		'tests',
 		with_plugin='python_rpcz',
 		suffix='_rpcz.py',
-		plugin_binary=os.path.join(rpcz_root, os.path.pardir, 'build/src/rpcz/plugin/python/protoc-gen-python_rpcz')
+		plugin_binary='../build/src/rpcz/plugin/python/protoc-gen-python_rpcz'
 	)
 
 
@@ -49,22 +48,25 @@ class GenPyext(Command):
 
 
 setup(
-    name = "rpcz",
-    version = "0.9",
-    author = "Nadav Samet",
-    author_email = "nadavs@google.com",
-    description = "An RPC implementation for Protocol Buffer based on ZeroMQ",
-    license = "Apache 2.0",
-    keywords = "protocol-buffers rpc zeromq 0mq",
-    packages=['rpcz', 'tests'],
-    url='http://code.google.com/p/rpcz/',
+    name="rpcz",
+    version="0.9.1",
+    author="Nadav Samet",
+    author_email="nadavs@google.com",
+    description="An RPC implementation for Protocol Buffer based on ZeroMQ",
+    license="Apache 2.0",
+    keywords="protocol-buffers rpc zeromq 0mq",
+    packages=[
+		'rpcz',
+		'tests'
+	],
+    url='http://github.com/macroeyes/rpcz',
     long_description='',
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: Apache Software License",
     ],
-    cmdclass = {
+    cmdclass={
         'Build': Build,
         'GenPyext': GenPyext,
     },
@@ -72,13 +74,15 @@ setup(
         Extension(
 			'rpcz.pywraprpcz',
 			['cython/pywraprpcz.cpp'],
-			libraries=["rpcz"],
+			libraries=['rpcz'],
 			include_dirs=[
-				os.path.join(rpcz_root, os.path.pardir, 'include'),
-			    os.path.join(rpcz_root, os.path.pardir, 'build/src')
+				'../include',
+			    '../build/src',
+				'/usr/local/include'
 			],
 			library_dirs=[
-			    os.path.join(rpcz_root, os.path.pardir, 'build/src/rpcz')
+			    '../build/src/rpcz',
+			    '/usr/local/lib'
 			],
 			language='c++'
 		)
