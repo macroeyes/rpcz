@@ -1,25 +1,30 @@
 import os
-import compiler
+import sys
+from compiler import generate_proto
 import shutil
 from distutils.core import Command
 from distutils.command import build as build_module
 from distutils.extension import Extension
-from distutils.core import setup
+from setuptools import setup
 
-rpcz_python_dir = os.path.abspath(os.path.dirname(__file__))
+# setuptools DWIM monkey-patch madness
+# http://mail.python.org/pipermail/distutils-sig/2007-September/thread.html#8204
+if 'setuptools.extension' in sys.modules:
+    m = sys.modules['setuptools.extension']
+    m.Extension.__dict__ = m._Extension.__dict__
 
 def _build_rpcz_proto():
-    compiler.generate_proto(
+    generate_proto(
         '../build/src/rpcz/proto/rpcz.proto',
         'rpcz'
     )
 
 def _build_test_protos():
-    compiler.generate_proto(
+    generate_proto(
 		'../test/proto/search.proto',
 		'tests'
 	)
-    compiler.generate_proto(
+    generate_proto(
 		'../test/proto/search.proto',
 		'tests',
 		with_plugin='python_rpcz',
@@ -32,7 +37,7 @@ class Build(build_module.build):
     def run(self):
         _build_rpcz_proto()
         _build_test_protos()
-        shutil.copy('compiler.py', 'rpcz')
+        shutil.copy('py', 'rpcz')
         build_module.build.run(self)
 
 
@@ -55,10 +60,8 @@ setup(
     description="An RPC implementation for Protocol Buffer based on ZeroMQ",
     license="Apache 2.0",
     keywords="protocol-buffers rpc zeromq 0mq",
-    packages=[
-		'rpcz',
-		'tests'
-	],
+    packages=['rpcz', 'tests'],
+	setup_requires=['setuptools_cython'],
     url='http://github.com/macroeyes/rpcz',
     long_description='',
     classifiers=[
@@ -81,7 +84,6 @@ setup(
 				'/usr/local/include'
 			],
 			library_dirs=[
-			    '../build/src/rpcz',
 			    '/usr/local/lib'
 			],
 			language='c++'
